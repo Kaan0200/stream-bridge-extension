@@ -4,6 +4,7 @@
   "version": "0.0.1",
   "description": "A plasmo browser extension that gives music stores a connection to listen to songs on a streaming service instead.",
   "author": "A.K.A",
+  "license": "MIT",
   "scripts": {
     "dev": "plasmo dev",
     "build": "plasmo build",
@@ -24,8 +25,10 @@
     "typescript": "5.3.3"
   },
   "manifest": {
+    "permissions": ["scripting"],
     "host_permissions": [
-      "https://*/*"
+      "https://www.beatport.com/*",
+      "https://www.junodownload.com/*"
     ]
   }
 }
