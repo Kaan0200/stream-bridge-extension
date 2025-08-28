@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@tidal-music/auth':
+        specifier: ^1.4.0
+        version: 1.4.0
       plasmo:
         specifier: 0.90.5
         version: 0.90.5(@swc/core@1.13.4(@swc/helpers@0.5.17))(@swc/helpers@0.5.17)(@types/node@20.11.5)(postcss@8.5.6)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -1495,6 +1498,15 @@ packages:
   '@szmarczak/http-timer@5.0.1':
     resolution: {integrity: sha512-+PmQX0PiAYPMeVYe237LJAYvOMYW1j2rH5YROyS3b4CTVJum34HfRvKvAzozHAQG0TnHNdUfY9nCeUyRAs//cw==}
     engines: {node: '>=14.16'}
+
+  '@tidal-music/auth@1.4.0':
+    resolution: {integrity: sha512-b/8n6aHYoMuzGbNTT4QOwm9xjTosHCn9F+Vi26Nq1x1OuK+XK9zbuAkSwma/C5eYHy4fPBTcSw82us5K5mUHmA==}
+
+  '@tidal-music/common@0.2.0':
+    resolution: {integrity: sha512-XBNzRiN6rRQL0gu5cIigMdSQy1U4zEx5nJ9caaIACNXSu+RGGkYpoxWp8CBJTHtkQ3oSF2SMugNEo71i8LPP3g==}
+
+  '@tidal-music/true-time@0.3.0':
+    resolution: {integrity: sha512-nO9DfLKLu5sCI/v6Yp8DSseu8qis0RI1r6l7oIFCusOAedkIbQT/K+ELaaz7cxXR4cboopUZGW55v4RVwxHE/g==}
 
   '@trysound/sax@0.2.0':
     resolution: {integrity: sha512-L7z9BgrNEcYyUYtF+HaEfiS5ebkh9jXqbszz7pC0hRBPaatV0XjSD3+eHrpqFemQfgwiFF0QPIarnIihIDn7OA==}
@@ -4743,6 +4755,15 @@ snapshots:
   '@szmarczak/http-timer@5.0.1':
     dependencies:
       defer-to-connect: 2.0.1
+
+  '@tidal-music/auth@1.4.0':
+    dependencies:
+      '@tidal-music/common': 0.2.0
+      '@tidal-music/true-time': 0.3.0
+
+  '@tidal-music/common@0.2.0': {}
+
+  '@tidal-music/true-time@0.3.0': {}
 
   '@trysound/sax@0.2.0': {}
 
