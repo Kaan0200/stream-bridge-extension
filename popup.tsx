@@ -1,8 +1,7 @@
 import { useState } from "react"
-import { finalizeLogin, init, initializeLogin } from "@tidal-music/auth/dist"
+import { finalizeLogin, init, initializeLogin } from "@tidal-music/auth"
 
-function IndexPopup() {
-
+export default function IndexPopup() {
 
   const [data, setData] = useState("")
 
@@ -46,5 +45,3 @@ async function TidalLoginFlow() {
 
   window.open(loginUrl, '_self');
 }
-
-export default IndexPopup
