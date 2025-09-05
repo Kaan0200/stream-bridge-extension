@@ -27,7 +27,8 @@
   },
   "manifest": {
     "permissions": [
-      "scripting"
+      "scripting",
+      "identity"
     ],
     "host_permissions": [
       "https://www.beatport.com/*",

@@ -36,13 +36,15 @@ async function TidalLoginFlow() {
   const ClientID: string = "wzkJ9EGRVZyio8l2";
   let secretInput = document.getElementById(SecretInputID);
   console.log("firing login flow");
-  await init({clientId: ClientID, clientSecret: secretInput.innerText, credentialsStorageKey: 'authorizationCode'})
+  await init({clientId: ClientID, clientSecret: secretInput["value"], credentialsStorageKey: 'authorizationCode'});
+
+  chrome.runtime.openOptionsPage()
   
   const loginUrl = await initializeLogin({
-   redirectUri: "window.location.href"
+   redirectUri: chrome.identity.getRedirectURL("oauth2")
   });
 
   //finalizeLogin()
 
-  window.open(loginUrl, '_blank');
+  window.open(loginUrl, '_open');
 }
