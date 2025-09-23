@@ -29,7 +29,9 @@
     "permissions": [
       "scripting",
       "identity",
-      "cookies"
+      "runtime",
+      "storage",
+      "webRequest"
     ],
     "host_permissions": [
       "https://www.beatport.com/*",

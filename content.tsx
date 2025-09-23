@@ -6,17 +6,13 @@ export const config: PlasmoCSConfig = {
     world: "MAIN",
 }
 
-const TidalAPIBase = 'https://tidal-music.github.io';
 
 function FindOnTidal() {
-    const targetUrl = `${TidalAPIBase}/${artistName} ${albumName}/relationships/tracks`
-    console.log("attempting to search...");
-    console.log(targetUrl);
-    fetch(targetUrl)
-        .then((response) => {
-            console.log("API Response");
-            console.log(response);
-        })
+    chrome.runtime.sendMessage({
+        action: 'search-tidal',
+        artist: artistName,
+        album: albumName
+    });
 }
 
 const LinkButton: () => JSX.Element = () => {
@@ -32,7 +28,6 @@ const LinkButton: () => JSX.Element = () => {
  */
 
 // Add "Link To" button to Website
-console.log("Attempting Match...");
 let target = document.querySelector('[data-testid="play-button"]');
 if (target) {
     console.log('found');
