@@ -1,15 +1,18 @@
 import { init, initializeLogin } from "@tidal-music/auth";
+import React from 'react';
 
-    const SecretInputID = 'secret-input';
 
-export default function OptionsPage() {
+
+const SecretInputID = 'secret-input';
+
+export default function OptionsPage(): React.JSX.Element {
 
     return (
     <div>
         <h2>Options</h2>
 
         <div>
-            <input id={SecretInputID} />
+            <input id={SecretInputID} style={{width: 300}}/>
         </div>
                     
         <button
@@ -33,18 +36,38 @@ export default function OptionsPage() {
 }
 
 async function TidalLoginFlow() {
-  const ClientID: string = "wzkJ9EGRVZyio8l2";
-  let secretInput = document.getElementById(SecretInputID);
-  console.log("firing login flow");
-  await init({clientId: ClientID, clientSecret: secretInput["value"], credentialsStorageKey: 'authorizationCode'});
+  const clientID: string = "wzkJ9EGRVZyio8l2";
+  const secretInput = (document.getElementById(SecretInputID) as HTMLInputElement).value;
+  const redirectUri = chrome.identity.getRedirectURL("oauth2");
 
-  chrome.runtime.openOptionsPage()
-  
-  const loginUrl = await initializeLogin({
-   redirectUri: chrome.identity.getRedirectURL("oauth2")
+  await init({
+    clientId: clientID,
+    clientSecret: secretInput,
+    credentialsStorageKey: 'authorizationCode'
   });
 
-  //finalizeLogin()
+  
+  const loginUrl = await initializeLogin({
+   redirectUri: redirectUri
+  });
 
-  window.open(loginUrl, '_open');
+
+  console.log(`[EXTENSION] firing login flow: ${loginUrl}`);
+  chrome.identity.launchWebAuthFlow({
+    url: loginUrl,
+    interactive: true
+  }, (callbackURL) => {
+      if (callbackURL === undefined) {
+        console.error("[EXTENSION-ERROR] callbackUrlString is undefined")
+        return
+      } else {
+        const token = callbackURL.substring(callbackURL.indexOf('='), callbackURL.indexOf('&'));
+
+        console.log(`returned token: ${token}`);
+        
+        chrome.storage.local.set({
+          'tidal-token': token
+        });
+      }
+  }) 
 }

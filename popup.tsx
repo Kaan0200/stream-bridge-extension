@@ -35,10 +35,15 @@ export default function IndexPopup() {
 async function TidalLoginFlow() {
   const ClientID: string = "wzkJ9EGRVZyio8l2";
   console.log("firing login flow");
-  await init({clientId: ClientID, credentialsStorageKey: 'authorizationCode'})
+
+  await init({
+    clientId: ClientID,
+    credentialsStorageKey: 'key',
+    scopes: []
+  })
   
   const loginUrl = await initializeLogin({
-   redirectUri: "https://login.tidal.com/"
+    redirectUri: "https://login.tidal.com/"
   });
 
   //finalizeLogin()
