@@ -2,7 +2,9 @@ import type { IMessage } from "~types/message";
 
 const TidalAPIBase = 'https://tidal-music.github.io';
 
-chrome.runtime.onMessage.addListener(handleMessage)
+console.log("background is alive!!");
+
+chrome.runtime.onMessage.addListener(handleMessage);
 
 function handleMessage(message: IMessage) {
     if (message.action === 'search-tidal') {

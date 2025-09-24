@@ -11,6 +11,7 @@
     "package": "plasmo package"
   },
   "dependencies": {
+    "@plasmohq/messaging": "^0.7.2",
     "@tidal-music/auth": "^1.4.0",
     "plasmo": "0.90.5",
     "react": "18.2.0",
@@ -26,6 +27,7 @@
     "typescript": "5.3.3"
   },
   "manifest": {
+    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtcfMtvju518WnyE9bJHr9giBRhxlGnQBCrzIbnH9E+Koi01QV+hwrHWJvBa9HqRw4LpCJIugPvp5jr840xO9iaGfhHZdwS7u3OvbJvqD8HlUEp7GQ25jdN7CnGumwDNAnruJ5YK9e3JlmyxZE5dNT1KDsDO5+3eD94vTDoZlcLlYaeW9t7FkYwpRXGk5KtSc5Idfk3Zus6d2Tuy+6P8qF+dTJuEvLHyPSHqf3ETAQdk0Dh+7LGQSSmZFv9Lzd7I6PytQe2COFSTAf0AmKt/sr08NGc90+x3hVi3s0Ngpw8l+x8k3Lsmc/LuAX380z55V6atIBkogGsf5GDUWZ8cXdQIDAQAB",
     "permissions": [
       "scripting",
       "identity",
