@@ -11,6 +11,7 @@
     "package": "plasmo package"
   },
   "dependencies": {
+    "@floating-ui/react-dom": "^2.1.6",
     "@plasmohq/messaging": "^0.7.2",
     "@tidal-music/auth": "^1.4.0",
     "plasmo": "0.90.5",

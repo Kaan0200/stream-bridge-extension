@@ -1,5 +1,6 @@
 import { credentialsProvider, finalizeLogin, init, initializeLogin } from "@tidal-music/auth"
 import React from "react"
+import Dropdown from "~components/dropdown"
 
 const SecretInputID = "secret-input"
 const ExchangeCodeDisplayID = "exchange-code"
@@ -68,7 +69,7 @@ export default function OptionsPage(): React.JSX.Element {
         </button>
       </div>
       <div style={styleRow} id={SearchResultDisplayID}>
-          nothing
+          <Dropdown><>nothing</></Dropdown>
       </div>
     </div>
   )
