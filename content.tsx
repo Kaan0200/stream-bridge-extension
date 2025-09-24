@@ -1,17 +1,19 @@
+import { sendToBackground } from "@plasmohq/messaging";
 import type { PlasmoCSConfig } from "plasmo";
 import { renderToStaticMarkup } from 'react-dom/server';
 
 export const config: PlasmoCSConfig = {
     matches: ['https://www.beatport.com/*'],
-    world: "MAIN",
 }
 
 
-function FindOnTidal() {
-    chrome.runtime.sendMessage({
-        action: 'search-tidal',
-        artist: artistName,
-        album: albumName
+async function FindOnTidal() {
+    sendToBackground({
+        name: 'tidal',
+        body: {
+            artist: artistName,
+            album: albumName
+        }
     });
 }
 

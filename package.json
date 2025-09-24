@@ -33,7 +33,8 @@
       "identity",
       "runtime",
       "storage",
-      "webRequest"
+      "webRequest",
+      "tabs"
     ],
     "host_permissions": [
       "https://www.beatport.com/*",
