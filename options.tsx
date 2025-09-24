@@ -1,20 +1,23 @@
-import { init, initializeLogin } from "@tidal-music/auth";
+import { finalizeLogin, init, initializeLogin } from "@tidal-music/auth";
 import React from 'react';
-
-
 
 const SecretInputID = 'secret-input';
 
 export default function OptionsPage(): React.JSX.Element {
 
     return (
-    <div>
+    <div style={{
+      padding: "4rem",
+
+      display: "flex",
+      flexDirection: "column"
+    }}>
         <h2>Options</h2>
 
         <div>
             <input id={SecretInputID} style={{width: 300}}/>
         </div>
-                    
+        <div>  
         <button
             onClick={() => TidalLoginFlow()}
             style={{
@@ -31,6 +34,22 @@ export default function OptionsPage(): React.JSX.Element {
         >
         Login to TIDAL
       </button>
+      </div> <div>
+      <button
+        onClick={() => ExchangeToken()}
+        style={{
+          width: 120,
+          height: 48,
+          backgroundColor: "grey",
+          color: "black",
+          borderStyle: "none",
+          borderRadius: 8,
+          cursor: "pointer",
+        }}
+        >
+          Exchange Token
+      </button>
+      </div>
     </div>
     )
 }
@@ -57,17 +76,30 @@ async function TidalLoginFlow() {
     url: loginUrl,
     interactive: true
   }, (callbackURL) => {
+      // login did not return the needed callbackURL
       if (callbackURL === undefined) {
         console.error("[EXTENSION-ERROR] callbackUrlString is undefined")
         return
-      } else {
-        const token = callbackURL.substring(callbackURL.indexOf('='), callbackURL.indexOf('&'));
-
-        console.log(`returned token: ${token}`);
-        
-        chrome.storage.local.set({
-          'tidal-token': token
-        });
       }
-  }) 
+      console.log(`returned url: ${callbackURL}`);
+
+      // login flow returned with Authorization code
+      const token = callbackURL.substring(callbackURL.indexOf('='), callbackURL.indexOf('&'));
+
+      chrome.storage.local.set({
+        'tidal-token': token
+      });
+
+      init({
+        clientId: clientID,
+        clientSecret: secretInput,
+        credentialsStorageKey: 'authorizationCode'
+      }).then(() => {
+        finalizeLogin(callbackURL);
+      });  
+  })
+}
+
+async function ExchangeToken() {
+
 }
