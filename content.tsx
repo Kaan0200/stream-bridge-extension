@@ -34,7 +34,6 @@ export const getStyle: PlasmoGetStyle = () => {
         	cursor: pointer;
         	outline: inherit;
         }
-
         #ext-stream-bridge-button {
             display: flex;
             padding: 0;
@@ -60,6 +59,7 @@ export const getStyle: PlasmoGetStyle = () => {
         #ext-stream-dropdown-anchor:hover {
             background-color: #323B5D;
         }
+
     `;
 
     return style;
@@ -68,7 +68,7 @@ export const getStyle: PlasmoGetStyle = () => {
 /**
  * 
  */
-async function FindOnTidal() {
+async function DefaultStream() {
 
     // Collect Search Information for Clicking on Link
     let artistLinkNodes: NodeListOf<ChildNode> = document.querySelector('[data-testid="release-artist-list"]').childNodes;
@@ -77,6 +77,11 @@ async function FindOnTidal() {
     let [ , typeName, releaseName] = location.pathname.split("/");
     const albumName = releaseName;
 
+
+    // @todo Get the user's default setting about which streaming provider they are looking for
+
+
+    // message background
     sendToBackground({
         name: 'tidal',
         body: {
@@ -93,9 +98,32 @@ async function FindOnTidal() {
  * @returns 
  */
 const LinkButton: () => JSX.Element = () => {
+    // Styles for dropdown, which is not shadow-dom
+    const style = document.createElement("style");
+    style.textContent = `        
+        #menu-bottom {
+            background-color: #1E2C5B;
+            border: 2px solid #2E2C5B;
+            border-radius: 8px;
+            padding: .5rem 0 .5rem 0;
+        }
+        .menu-item {
+            padding: 0 .5rem 0 .5rem;
+        }
+        .menu-item:hover {
+            background-color: #4E2C5B;
+        }
+        .menu-separator {
+            margin: .25rem;
+            height: 2px;
+            background-color: #2E2C5B;
+        }
+    `;
+    document.body.append(style);
+
     return (
         <button id="ext-stream-bridge-button">
-            <span id="ext-stream-default" onClick={() => FindOnTidal()}>
+            <span id="ext-stream-default" onClick={() => DefaultStream()}>
                 🌊Stream
             </span>
             <Menu.Root>
@@ -107,8 +135,11 @@ const LinkButton: () => JSX.Element = () => {
                 <Menu.Portal>
                     <Menu.Positioner>
                         <Menu.Popup id="menu-bottom">
-                            <Menu.Item className="">Find on Tidal</Menu.Item>
-                            <Menu.Item className="">Find on Spotify</Menu.Item>
+                            <Menu.Item className="menu-item">Listen on Tidal</Menu.Item>
+                            <Menu.Item className="menu-item">Listen on Spotify</Menu.Item>
+                            <Menu.Separator className="menu-separator"></Menu.Separator>
+                            <Menu.Item className="menu-item">Find on Tidal</Menu.Item>
+                            <Menu.Item className="menu-item">Find on Spotify</Menu.Item>
                         </Menu.Popup>
                     </Menu.Positioner>
                 </Menu.Portal>
