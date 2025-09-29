@@ -94,14 +94,16 @@ async function TidalSearch() {
     const artistName = (artistLinkNodes[0] as HTMLLinkElement).title;
   
     let trackLinkNode = document.getElementsByTagName('h1');
-    const albumName = trackLinkNode[0].innerText;
+    let trackName = trackLinkNode[0].innerText;
+    // clean extra "junk" terms
+    trackName = trackName.replace("(Extended Mix)", "");
   
     const response = await sendToBackground({
         name: 'tidal',
         body: {
             command: 'search',
             artist: artistName,
-            album: albumName
+            album: trackName
         }
     });
     window.open(response, "_blank");
