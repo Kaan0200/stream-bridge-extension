@@ -1,31 +1,70 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging";
-import { credentialsProvider } from "@tidal-music/auth";
+import { credentialsProvider, init } from "@tidal-music/auth";
+import { debug } from "console";
 
+const clientID: string = "wzkJ9EGRVZyio8l2";
+
+const TidalAppTrackBase = 'https://tidal.com/track';
+const TidalAppSearchBase = 'https://tidal.com/search';
 const TidalAPIBase = 'https://openapi.tidal.com/v2';
 
+/**
+ * Route the Tidal Command
+ * @param req 
+ * @param res 
+ */
+const tidal: PlasmoMessaging.MessageHandler = (req, res) => {
+    const {artist, album, command} = req.body;
+    let URLPromise: Promise<string>;
 
-const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
-
-    const targetUrl = encodeURI(`${TidalAPIBase}/searchResults/${req.body.artist} ${req.body.album}/relationships/tracks?countryCode=US&include=tracks`);
-
-    const credentials = await credentialsProvider.getCredentials();
-
-        if (credentials.token) {
-            const authString: string = "Bearer " + (credentials.token as String);
-            const request = new Request(targetUrl);
-            request.headers.append("Authorization", authString);
-            request.headers.append("Accept", "application/vnd.api+json");
-
-
-
-            //console.log(token);
-      
-        fetch(request)
-        .then((response) => {
-            console.log("API Response");
-            console.log(response);
-        })   
+    switch(command) {
+        case 'stream': {
+            URLPromise = OpenOnTidal(artist, album);
+            break;
+        }
+        // go to tidal search results
+        case 'search': {
+            URLPromise = SearchOnTidal(artist, album);
+            break;
+        }
+        default: {
+            console.error('🌊 Unknown command sent to tidal background.');
+            break;
+        }
     }
+
+    URLPromise.then((finalURL) => {
+        res.send(finalURL);
+    })
 }
 
-export default handler;
+
+export async function OpenOnTidal(artist: string, album: string): Promise<string> {
+    await init({
+        clientId: clientID,
+        credentialsStorageKey: "authorizationCode"
+    });
+    const credentials = await credentialsProvider.getCredentials();
+
+    // build request
+    const targetUrl = encodeURI(`${TidalAPIBase}/searchResults/${artist} ${album}/relationships/tracks?countryCode=US&include=tracks`);
+    const authString: string = "Bearer " + (credentials.token as String);
+    const request = new Request(targetUrl);
+    request.headers.append("Authorization", authString);
+    request.headers.append("Accept", "application/vnd.api+json");
+
+    // do search
+    const response = await fetch(request)
+    const firstChoice = response.body[0];
+    const finalUrl = encodeURI(`${TidalAppTrackBase}/${firstChoice}`);
+
+    // send final URL
+    return finalUrl;
+}
+
+export async function SearchOnTidal(artist: string, album: string): Promise<string> {
+    const targetUrl = encodeURI(`${TidalAppSearchBase}?q=${artist} ${album}`);
+    return targetUrl;
+}
+
+export default tidal;

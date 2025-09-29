@@ -1,13 +1,35 @@
 import { credentialsProvider, finalizeLogin, init, initializeLogin } from "@tidal-music/auth";
 import React from "react";
 
-const ExchangeCodeDisplayID = "exchange-code"
-const SearchResultDisplayID = "search-out"
+const ExchangeCodeDisplayID = "exchange-code";
+const SearchResultDisplayID = "search-out";
 
-const clientID: string = "wzkJ9EGRVZyio8l2"
+const clientID: string = "wzkJ9EGRVZyio8l2";
+
+function ButtonStyleObject(color: string) {
+  return {
+    width: 120,
+    height: 48,
+    backgroundColor: color,
+    color: "white",
+    borderStyle: "none",
+    borderRadius: 8,
+    cursor: "pointer"
+  }
+}
+const styleRow = { padding: "0.5rem" }
 
 export default function OptionsPage(): React.JSX.Element {
-  const styleRow = { padding: "0.5rem" }
+  // Check if authed
+  init({
+    clientId: clientID,
+    credentialsStorageKey: "authorizationCode"
+  }).then(async () => {
+    const credentials = await credentialsProvider.getCredentials();
+    document.getElementById(ExchangeCodeDisplayID).innerText = 
+      `TIDAL UserID: ${credentials.userId}`;
+  });
+
 
   return (
     <div
@@ -17,49 +39,26 @@ export default function OptionsPage(): React.JSX.Element {
         flexDirection: "column"
       }}>
       <h2>Options</h2>
+      <div id={ExchangeCodeDisplayID} 
+        style={{wordWrap: 'break-word'}}>Login status...</div>
       <div style={styleRow}>
         <button
           onClick={() => TidalLoginFlow()}
-          style={{
-            width: 120,
-            height: 48,
-            backgroundColor: "black",
-            color: "white",
-            borderStyle: "none",
-            borderRadius: 8,
-            cursor: "pointer"
-          }}>
+          style={ButtonStyleObject("black")}>
           Login to TIDAL
         </button>
       </div>
-      <div id={ExchangeCodeDisplayID} style={{wordWrap: 'break-word'}}>no token</div>
       <div style={styleRow}>
         <button
           onClick={() => ExchangeToken()}
-          style={{
-            width: 120,
-            height: 48,
-            backgroundColor: "grey",
-            color: "black",
-            borderStyle: "none",
-            borderRadius: 8,
-            cursor: "pointer"
-          }}>
+          style={ButtonStyleObject("black")}>
           Exchange Token
         </button>
       </div>
       <div style={styleRow}>
         <button
           onClick={() => DoSearch()}
-          style={{
-            width: 120,
-            height: 48,
-            backgroundColor: "grey",
-            color: "black",
-            borderStyle: "none",
-            borderRadius: 8,
-            cursor: "pointer"
-          }}>
+          style={ButtonStyleObject("grey")}>
           Fire Search
         </button>
       </div>
@@ -68,16 +67,16 @@ export default function OptionsPage(): React.JSX.Element {
 }
 
 async function TidalLoginFlow() {
-  const redirectUri = chrome.identity.getRedirectURL("oauth2")
+  const redirectUri = chrome.identity.getRedirectURL("oauth2");
 
   await init({
     clientId: clientID,
     credentialsStorageKey: "authorizationCode"
-  })
+  });
 
   const loginUrl = await initializeLogin({
     redirectUri: redirectUri
-  })
+  });
 
   console.log(`[EXTENSION] firing login flow: ${loginUrl}`)
   chrome.identity.launchWebAuthFlow(
@@ -88,11 +87,11 @@ async function TidalLoginFlow() {
     (callbackURL) => {
       // login did not return the needed callbackURL
       if (callbackURL === undefined) {
-        console.error("[EXTENSION-ERROR] callbackUrlString is undefined")
+        console.error("[EXTENSION-ERROR] callbackUrlString is undefined");
         return
       }
       console.log(`returned url: ${callbackURL}`);
-      (document.getElementById(ExchangeCodeDisplayID) as HTMLDivElement).innerText = callbackURL
+      (document.getElementById(ExchangeCodeDisplayID) as HTMLDivElement).innerText = callbackURL;
 
       // login flow returned with Authorization code
       const token = callbackURL.substring(
@@ -117,10 +116,16 @@ async function ExchangeToken() {
     credentialsStorageKey: "authorizationCode"
   })
 
-  finalizeLogin(query).then(async (rez) => {
-    console.log("returned from Code Exchange... posting credentials obj");
+  finalizeLogin(query).then(async () => {
     const credentials = await credentialsProvider.getCredentials();
+    console.log("Retrieved Credentials.");
     console.log(credentials);
+    chrome.storage.session.set({
+      tidal: {
+        userId: credentials.userId,
+        token: credentials.token,
+      }
+    })
   })
   
 }
@@ -146,7 +151,7 @@ async function DoSearch() {
       const targetTrackURL = TidalSearchBase + "/" + targetTrackID;
       document.getElementById(SearchResultDisplayID).innerText = "targeting url " +  targetTrackURL;
 
-      window.open(targetTrackURL , "_self")
+      window.open(targetTrackURL , "_self");
 
   });
 }

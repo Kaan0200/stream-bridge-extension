@@ -33,7 +33,6 @@
     "permissions": [
       "scripting",
       "identity",
-      "runtime",
       "storage",
       "webRequest",
       "tabs"

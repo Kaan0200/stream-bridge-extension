@@ -1,10 +1,11 @@
 import { sendToBackground } from "@plasmohq/messaging";
 import type { PlasmoCSConfig, PlasmoGetInlineAnchor, PlasmoGetStyle } from "plasmo";
 import { Menu } from '@base-ui-components/react';
-import { renderToStaticMarkup } from 'react-dom/server';
+
+console.log("🌊 Content Script Waking Up...");
 
 export const config: PlasmoCSConfig = {
-    matches: ['https://www.beatport.com/release/**'],
+    matches: ['https://www.beatport.com/release/*'],
 }
 
 /**
@@ -12,10 +13,10 @@ export const config: PlasmoCSConfig = {
  * Function that tells plasmo how to mount it's shadow-dom container
  * @returns 
  */
-export const getInlineAnchor: PlasmoGetInlineAnchor = async () => ({
+export const getInlineAnchor: PlasmoGetInlineAnchor = () => ({
     element: document.querySelector('[data-testid="play-button"]'),
     insertPosition: 'afterend'
-})
+});
 
 /**
  * [Plasmo Framework Function]
@@ -55,6 +56,7 @@ export const getStyle: PlasmoGetStyle = () => {
             padding: 0 0.25rem;
             background-color: #1E2C5B;
             border-radius: 0 4px 4px 0;
+            cursor: pointer;
         }
         #ext-stream-dropdown-anchor:hover {
             background-color: #323B5D;
@@ -64,30 +66,62 @@ export const getStyle: PlasmoGetStyle = () => {
     return style;
 }
 
+
 /**
  * 
  */
 async function DefaultStream() {
-
-    // Collect Search Information for Clicking on Link
     let artistLinkNodes: NodeListOf<ChildNode> = document.querySelector('[data-testid="release-artist-list"]').childNodes;
     const artistName = (artistLinkNodes[0] as HTMLLinkElement).title;
-
-    let [ , typeName, releaseName] = location.pathname.split("/");
-    const albumName = releaseName;
-
-
-    // @todo Get the user's default setting about which streaming provider they are looking for
-
-
-    // message background
+  
+    let trackLinkNode = document.getElementsByTagName('h1');
+    const albumName = trackLinkNode[0].innerText;
+  
     sendToBackground({
+        name: 'common',
+        body: {
+            command: 'default',
+            artist: artistName,
+            album: albumName
+        }
+    }).then((response) => {
+        window.open(response, "_blank");
+    });
+  }
+
+async function TidalSearch() {
+    let artistLinkNodes: NodeListOf<ChildNode> = document.querySelector('[data-testid="release-artist-list"]').childNodes;
+    const artistName = (artistLinkNodes[0] as HTMLLinkElement).title;
+  
+    let trackLinkNode = document.getElementsByTagName('h1');
+    const albumName = trackLinkNode[0].innerText;
+  
+    const response = await sendToBackground({
         name: 'tidal',
         body: {
+            command: 'search',
             artist: artistName,
             album: albumName
         }
     });
+    window.open(response, "_blank");
+}
+
+async function TidalStream() {
+    let artistLinkNodes: NodeListOf<ChildNode> = document.querySelector('[data-testid="release-artist-list"]').childNodes;
+    const artistName = (artistLinkNodes[0] as HTMLLinkElement).title;
+  
+    let trackLinkNode = document.getElementsByTagName('h1');
+    const albumName = trackLinkNode[0].innerText;
+    
+    const response = await sendToBackground({
+        name: 'tidal',
+        body: {
+            command: 'stream', artist: artistName, album: albumName
+        }
+    })
+    window.open(response, "_blank");
+
 }
 
 /**
@@ -108,6 +142,7 @@ const LinkButton: () => JSX.Element = () => {
         }
         .menu-item {
             padding: 0 .5rem 0 .5rem;
+            cursor: pointer;
         }
         .menu-item:hover {
             background-color: #4E2C5B;
@@ -134,10 +169,10 @@ const LinkButton: () => JSX.Element = () => {
                 <Menu.Portal>
                     <Menu.Positioner>
                         <Menu.Popup id="menu-bottom">
-                            <Menu.Item className="menu-item">Listen on Tidal</Menu.Item>
+                            <Menu.Item className="menu-item" onClick={() => TidalStream()}>Listen on Tidal</Menu.Item>
                             <Menu.Item className="menu-item strike">Listen on Spotify</Menu.Item>
                             <Menu.Separator className="menu-separator"></Menu.Separator>
-                            <Menu.Item className="menu-item ">Search on Tidal</Menu.Item>
+                            <Menu.Item className="menu-item" onClick={() => TidalSearch()}>Search on Tidal</Menu.Item>
                             <Menu.Item className="menu-item strike">Search on Spotify</Menu.Item>
                         </Menu.Popup>
                     </Menu.Positioner>
