@@ -11,6 +11,6 @@ Do you like browsing music through online webstores like Beatport, JunoDownload,
 
 | Web Store | Spotify | Tidal |
 | --------- |--------- | -------- | 
-| Beatport  | ❌ | ❌ |
+| Beatport  | ❌ | 🟡 |
 | JunoDownload | ❌ | ❌
 
