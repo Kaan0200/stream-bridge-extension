@@ -59,7 +59,6 @@ export const getStyle: PlasmoGetStyle = () => {
         #ext-stream-dropdown-anchor:hover {
             background-color: #323B5D;
         }
-
     `;
 
     return style;
@@ -136,10 +135,10 @@ const LinkButton: () => JSX.Element = () => {
                     <Menu.Positioner>
                         <Menu.Popup id="menu-bottom">
                             <Menu.Item className="menu-item">Listen on Tidal</Menu.Item>
-                            <Menu.Item className="menu-item">Listen on Spotify</Menu.Item>
+                            <Menu.Item className="menu-item strike">Listen on Spotify</Menu.Item>
                             <Menu.Separator className="menu-separator"></Menu.Separator>
-                            <Menu.Item className="menu-item">Find on Tidal</Menu.Item>
-                            <Menu.Item className="menu-item">Find on Spotify</Menu.Item>
+                            <Menu.Item className="menu-item ">Search on Tidal</Menu.Item>
+                            <Menu.Item className="menu-item strike">Search on Spotify</Menu.Item>
                         </Menu.Popup>
                     </Menu.Positioner>
                 </Menu.Portal>

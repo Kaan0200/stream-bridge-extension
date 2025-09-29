@@ -1,8 +1,6 @@
-import { credentialsProvider, finalizeLogin, init, initializeLogin } from "@tidal-music/auth"
-import React from "react"
-import Dropdown from "~components/dropdown"
+import { credentialsProvider, finalizeLogin, init, initializeLogin } from "@tidal-music/auth";
+import React from "react";
 
-const SecretInputID = "secret-input"
 const ExchangeCodeDisplayID = "exchange-code"
 const SearchResultDisplayID = "search-out"
 
@@ -19,9 +17,6 @@ export default function OptionsPage(): React.JSX.Element {
         flexDirection: "column"
       }}>
       <h2>Options</h2>
-      <div style={styleRow}>
-        <input id={SecretInputID} style={{ width: 300 }} />
-      </div>
       <div style={styleRow}>
         <button
           onClick={() => TidalLoginFlow()}
@@ -68,22 +63,15 @@ export default function OptionsPage(): React.JSX.Element {
           Fire Search
         </button>
       </div>
-      <div style={styleRow} id={SearchResultDisplayID}>
-          <Dropdown><>nothing</></Dropdown>
-      </div>
     </div>
   )
 }
 
 async function TidalLoginFlow() {
-  const secretInput = (
-    document.getElementById(SecretInputID) as HTMLInputElement
-  ).value
   const redirectUri = chrome.identity.getRedirectURL("oauth2")
 
   await init({
     clientId: clientID,
-    //clientSecret: secretInput,
     credentialsStorageKey: "authorizationCode"
   })
 
@@ -123,13 +111,9 @@ async function ExchangeToken() {
   const query = (
     document.getElementById(ExchangeCodeDisplayID) as HTMLDivElement
   ).innerText.split("?")[1];
-  const secretInput = (
-    document.getElementById(SecretInputID) as HTMLInputElement
-  ).value
 
   await init({
     clientId: clientID,
-    //clientSecret: secretInput,
     credentialsStorageKey: "authorizationCode"
   })
 
