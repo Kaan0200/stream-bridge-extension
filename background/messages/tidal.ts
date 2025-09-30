@@ -1,6 +1,5 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging";
 import { credentialsProvider, init } from "@tidal-music/auth";
-import { debug } from "console";
 
 const clientID: string = "wzkJ9EGRVZyio8l2";
 
@@ -40,11 +39,16 @@ const tidal: PlasmoMessaging.MessageHandler = (req, res) => {
 
 
 export async function OpenOnTidal(artist: string, album: string): Promise<string> {
-    await init({
+    const initCheck = await init({
         clientId: clientID,
         credentialsStorageKey: "authorizationCode"
     });
+    console.log("🌊🟡 after init...");
+    console.log(initCheck);
+
     const credentials = await credentialsProvider.getCredentials();
+    console.log("🌊🟡 after auth...");
+    console.log(credentials);
 
     // build request
     const targetUrl = encodeURI(`${TidalAPIBase}/searchResults/${artist} ${album}/relationships/tracks?countryCode=US&include=tracks`);

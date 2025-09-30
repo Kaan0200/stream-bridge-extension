@@ -14,8 +14,8 @@ export const config: PlasmoCSConfig = {
  * @returns 
  */
 export const getInlineAnchor: PlasmoGetInlineAnchor = () => ({
-    element: document.querySelector('[data-testid="play-button"]'),
-    insertPosition: 'afterend'
+    element: document.querySelector('[title="Collection controls"]'),
+    insertPosition: 'afterbegin'
 });
 
 /**
@@ -35,9 +35,9 @@ export const getStyle: PlasmoGetStyle = () => {
         	cursor: pointer;
         	outline: inherit;
         }
-        #ext-stream-bridge-button {
+        #ext-stream-bridge-container {
             display: flex;
-            padding: 0;
+            padding: 4px;
             border-radius: 8px;
             color: white;
         }
@@ -45,7 +45,7 @@ export const getStyle: PlasmoGetStyle = () => {
             background-color: #1E2338;
             line-height: 16px;
             font-size: 12px;
-            padding: 0.25rem 0.5rem;
+            padding: 0.5rem 0.5rem;
             font-weight: 500;
             border-radius: 4px 0 0 4px;
         }
@@ -53,7 +53,7 @@ export const getStyle: PlasmoGetStyle = () => {
             background-color: #293C7A;
         }
         #ext-stream-dropdown-anchor {
-            padding: 0 0.25rem;
+            padding: 0.25rem 0.5rem;
             background-color: #1E2C5B;
             border-radius: 0 4px 4px 0;
             cursor: pointer;
@@ -158,29 +158,29 @@ const LinkButton: () => JSX.Element = () => {
     document.body.append(style);
 
     return (
-        <button id="ext-stream-bridge-button">
-            <span id="ext-stream-default" onClick={() => DefaultStream()}>
+        <div id="ext-stream-bridge-container">
+            <button id="ext-stream-default" onClick={() => DefaultStream()}>
                 🌊Stream
-            </span>
-            <Menu.Root>
-                <Menu.Trigger>
-                    <span id="ext-stream-dropdown-anchor" onClick={() => {}}>
-                    🔻
-                    </span>
-                </Menu.Trigger>
-                <Menu.Portal>
-                    <Menu.Positioner>
-                        <Menu.Popup id="menu-bottom">
-                            <Menu.Item className="menu-item" onClick={() => TidalStream()}>Listen on Tidal</Menu.Item>
-                            <Menu.Item className="menu-item strike">Listen on Spotify</Menu.Item>
-                            <Menu.Separator className="menu-separator"></Menu.Separator>
-                            <Menu.Item className="menu-item" onClick={() => TidalSearch()}>Search on Tidal</Menu.Item>
-                            <Menu.Item className="menu-item strike">Search on Spotify</Menu.Item>
-                        </Menu.Popup>
-                    </Menu.Positioner>
-                </Menu.Portal>
-            </Menu.Root>
-        </button>
+            </button>
+            <div id="ext-stream-dropdown-anchor">
+                <Menu.Root >
+                    <Menu.Trigger>
+                        🔻
+                    </Menu.Trigger>
+                    <Menu.Portal>
+                        <Menu.Positioner>
+                            <Menu.Popup id="menu-bottom">
+                                <Menu.Item className="menu-item" onClick={() => TidalStream()}>Listen on Tidal</Menu.Item>
+                                <Menu.Item className="menu-item strike">Listen on Spotify</Menu.Item>
+                                <Menu.Separator className="menu-separator"></Menu.Separator>
+                                <Menu.Item className="menu-item" onClick={() => TidalSearch()}>Search on Tidal</Menu.Item>
+                                <Menu.Item className="menu-item strike">Search on Spotify</Menu.Item>
+                            </Menu.Popup>
+                        </Menu.Positioner>
+                    </Menu.Portal>
+                </Menu.Root>
+            </div>
+        </div>
     )
 }
 
