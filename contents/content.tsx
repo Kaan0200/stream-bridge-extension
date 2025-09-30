@@ -106,7 +106,12 @@ async function TidalSearch() {
             album: trackName
         }
     });
-    window.open(response, "_blank");
+    // error catching
+    if (response[0] === 'x') {
+        console.error("🌊" + response);
+    } else {
+        window.open(response, "_blank");
+    }
 }
 
 async function TidalStream() {

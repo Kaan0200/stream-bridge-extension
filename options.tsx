@@ -26,43 +26,70 @@ export default function OptionsPage(): React.JSX.Element {
     credentialsStorageKey: "authorizationCode"
   }).then(async () => {
     const credentials = await credentialsProvider.getCredentials();
-    document.getElementById(ExchangeCodeDisplayID).innerText = 
+    document.getElementById(ExchangeCodeDisplayID).innerText =
       `TIDAL UserID: ${credentials.userId}`;
   });
-
+  const css = `
+    .category {
+        padding: 3rem;
+        font-size: 1rem;
+    }
+    .page {
+      margin: 4rem;
+    }
+  `
 
   return (
-    <div
-      style={{
-        padding: "4rem",
-        display: "flex",
-        flexDirection: "column"
-      }}>
-      <h2>Options</h2>
-      <div id={ExchangeCodeDisplayID} 
-        style={{wordWrap: 'break-word'}}>Login status...</div>
-      <div style={styleRow}>
-        <button
-          onClick={() => TidalLoginFlow()}
-          style={ButtonStyleObject("black")}>
-          Login to TIDAL
-        </button>
+    <>
+      <style>{css}</style>
+      <div className="page">
+        <h1>Settings</h1>
+        <div style={{ display: 'flex' }}>
+          <div>
+            <div className="category top">General</div>
+            <div className="category">Tidal</div>
+            <div className="category bottom">Spotify</div>
+          </div>
+          <div style={{ width: '600px' }}>
+
+
+
+
+
+            <div id={ExchangeCodeDisplayID}
+              style={{ wordWrap: 'break-word' }}>Login status...</div>
+            <div style={styleRow}>
+              <button
+                onClick={() => TidalLoginFlow()}
+                style={ButtonStyleObject("black")}>
+                Login to TIDAL
+              </button>
+            </div>
+            <div style={styleRow}>
+              <button
+                onClick={() => ExchangeToken()}
+                style={ButtonStyleObject("black")}>
+                Exchange Token
+              </button>
+            </div>
+            <div style={styleRow}>
+              <button
+                onClick={() => ExchangeToken()}
+                style={ButtonStyleObject("purple")}>
+                Refresh Token
+              </button>
+            </div>
+            <div style={styleRow}>
+              <button
+                onClick={() => DoSearch()}
+                style={ButtonStyleObject("grey")}>
+                Fire Search
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
-      <div style={styleRow}>
-        <button
-          onClick={() => ExchangeToken()}
-          style={ButtonStyleObject("black")}>
-          Exchange Token
-        </button>
-      </div>
-      <div style={styleRow}>
-        <button
-          onClick={() => DoSearch()}
-          style={ButtonStyleObject("grey")}>
-          Fire Search
-        </button>
-      </div>
-    </div>
+    </>
   )
 }
 
@@ -127,7 +154,7 @@ async function ExchangeToken() {
       }
     })
   })
-  
+
 }
 
 async function DoSearch() {
@@ -141,17 +168,17 @@ async function DoSearch() {
   const request = new Request(targetUrl);
   request.headers.append("Authorization", authString);
   request.headers.append("Accept", "application/vnd.api+json");
-  
+
   fetch(request)
-  .then(async (response) => {
+    .then(async (response) => {
       console.log("API Response");
       const responseData = await response.json();
       console.log(responseData.data);
       const targetTrackID = responseData.data[0].id;
       const targetTrackURL = TidalSearchBase + "/" + targetTrackID;
-      document.getElementById(SearchResultDisplayID).innerText = "targeting url " +  targetTrackURL;
+      document.getElementById(SearchResultDisplayID).innerText = "targeting url " + targetTrackURL;
 
-      window.open(targetTrackURL , "_self");
+      window.open(targetTrackURL, "_self");
 
-  });
+    });
 }

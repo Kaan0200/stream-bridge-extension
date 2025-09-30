@@ -39,13 +39,16 @@ const tidal: PlasmoMessaging.MessageHandler = (req, res) => {
 
 
 export async function OpenOnTidal(artist: string, album: string): Promise<string> {
-    const initCheck = await init({
-        clientId: clientID,
-        credentialsStorageKey: "authorizationCode"
-    });
-    console.log("🌊🟡 after init...");
-    console.log(initCheck);
-
+    try {
+        const initCheck = await init({
+            clientId: clientID,
+            credentialsStorageKey: "authorizationCode"
+        });
+        console.log("🌊🟡 after init...");
+        console.log(initCheck);
+    } catch(ex ) {
+        return 'x: Could not init';
+    }
     const credentials = await credentialsProvider.getCredentials();
     console.log("🌊🟡 after auth...");
     console.log(credentials);
@@ -64,6 +67,7 @@ export async function OpenOnTidal(artist: string, album: string): Promise<string
 
     // send final URL
     return finalUrl;
+
 }
 
 export async function SearchOnTidal(artist: string, album: string): Promise<string> {
