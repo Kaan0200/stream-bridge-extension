@@ -1,52 +1,38 @@
 import { useState } from "react"
-import { finalizeLogin, init, initializeLogin } from "@tidal-music/auth"
 
-export default function IndexPopup() {
+import { sendToBackground } from "@plasmohq/messaging"
 
+/**
+ * Function that builds the index popup, because it is the default export
+ * plasmo knows what to do with this file.
+ * @returns JSX of the Popup window
+ */
+export default function IndexPopup(): JSX.Element {
   const [data, setData] = useState("")
 
   return (
     <div
       style={{
-        padding: 16
+        width: 160,
+        marginLeft: 16,
+        marginRight: 16,
+        marginTop: 32,
+        marginBottom: 32
       }}>
-      <h2>
-        Stream Bridge
-      </h2>
-      <button
-        onClick={() => TidalLoginFlow()}
-        style={{
-          width: 120,
-          height: 48,
-          backgroundColor: "black",
-          color: "white",
-          borderStyle: "none",
-          borderRadius: 8,
-          cursor: "pointer",
-          
-        }}
-      >
-        Login to TIDAL
-      </button>
+      <h2>Stream Bridge</h2>
+      <div>
+        Tidal Login Status: <span id="tidal-status">⭕</span>
+      </div>
     </div>
   )
 }
 
-async function TidalLoginFlow() {
-  const ClientID: string = "wzkJ9EGRVZyio8l2";
-  console.log("firing login flow");
-
-  await init({
-    clientId: ClientID,
-    credentialsStorageKey: 'key',
-    scopes: []
+async function UpdateTidalLoginStatus() {
+  const response = await sendToBackground({
+    name: "tidal",
+    body: {}
   })
-  
-  const loginUrl = await initializeLogin({
-    redirectUri: "https://login.tidal.com/"
-  });
-
-  //finalizeLogin()
-
-  window.open(loginUrl, '_self');
 }
+
+// Update when the popup is opened.
+UpdateTidalLoginStatus()
