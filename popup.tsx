@@ -28,9 +28,12 @@ export default function IndexPopup(): JSX.Element {
 }
 
 async function UpdateTidalLoginStatus() {
+  console.log("checking tidal login status...")
   const response = await sendToBackground({
     name: "tidal",
-    body: {}
+    body: {
+      command: "status"
+    }
   })
 }
 

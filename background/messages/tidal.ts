@@ -29,6 +29,7 @@ const tidal: PlasmoMessaging.MessageHandler = (req, res) => {
     }
     case "status": {
       URLPromise = TidalLoginStatus()
+      break
     }
     default: {
       console.error("🌊 Unknown command sent to tidal background.")
@@ -49,10 +50,12 @@ export async function OpenOnTidal(
   artist: string,
   album: string
 ): Promise<string> {
+  console.log("🌊🟢 starting open...")
   try {
     const initCheck = await init({
       clientId: clientID,
-      credentialsStorageKey: "authorizationCode"
+      credentialsStorageKey: "authorizationCode",
+      scopes: []
     })
     console.log("🌊🟡 after init...")
     console.log(initCheck)
