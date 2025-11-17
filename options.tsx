@@ -46,6 +46,9 @@ export default function OptionsPage(): React.JSX.Element {
     .page {
       margin: 4rem;
     }
+    .selected {
+      background-color: grey;
+    }
   `
 
   return (
@@ -53,44 +56,78 @@ export default function OptionsPage(): React.JSX.Element {
       <style>{css}</style>
       <div className="page">
         <h1>Settings</h1>
-        <div style={{ display: "flex" }}>
-          <div>
-            <div className="category top" onClick={() => setTab(0)}>
-              General {currentTab == 0 && <>🟢</>}
+        <div style={{ display: "flex", flexDirection: "row" }}>
+          <div style={{ width: "14rem" }}>
+            <div
+              className={"category top " + (currentTab == 0 && "selected")}
+              onClick={() => setTab(0)}>
+              General
             </div>
-            <div className="category" onClick={() => setTab(1)}>
-              Tidal {currentTab == 1 && <>🟢</>}
+            <div
+              className={"category " + (currentTab == 1 && "selected")}
+              onClick={() => setTab(1)}>
+              Tidal
             </div>
-            <div className="category bottom" onClick={() => setTab(2)}>
-              Spotify {currentTab == 2 && <>🟢</>}
-            </div>
-          </div>
-          <div style={{ width: "600px" }}>
-            <div id={ExchangeCodeDisplayID} style={{ wordWrap: "break-word" }}>
-              Login status...
-            </div>
-            <div style={styleRow}>
-              <button
-                onClick={() => TidalLogin()}
-                style={ButtonStyleObject("black")}>
-                Login to TIDAL
-              </button>
-            </div>
-            <div style={styleRow}>
-              <button
-                onClick={() => ExchangeToken()}
-                style={ButtonStyleObject("black")}>
-                Exchange Token
-              </button>
-            </div>
-            <div style={styleRow}>
-              <button
-                onClick={() => ExchangeToken()}
-                style={ButtonStyleObject("purple")}>
-                Refresh Token
-              </button>
+            <div
+              className={"category bottom  " + (currentTab == 2 && "selected")}
+              onClick={() => setTab(2)}>
+              Spotify
             </div>
           </div>
+          {currentTab == 0 && (
+            <>
+              <div style={{ flexGrow: 2, margin: "2rem" }}>
+                <h2>Default Streaming Service</h2>
+                <div>
+                  Which streaming service to use when clicking the "Stream"
+                  button on websites.{" "}
+                </div>
+                <select>
+                  <option>Tidal</option>
+                  <option>Spotify</option>
+                </select>
+              </div>
+            </>
+          )}
+          {currentTab == 1 && (
+            <>
+              <div style={{ flexGrow: 2 }}>
+                <div style={styleRow}>
+                  <button
+                    onClick={() => TidalLogin()}
+                    style={ButtonStyleObject("black")}>
+                    Login to TIDAL
+                  </button>
+                </div>
+                <div style={styleRow}>
+                  <button
+                    onClick={() => ExchangeToken()}
+                    style={ButtonStyleObject("black")}>
+                    Exchange Token
+                  </button>
+                </div>
+                <div style={styleRow}>
+                  <button
+                    onClick={() => ExchangeToken()}
+                    style={ButtonStyleObject("purple")}>
+                    Refresh Token
+                  </button>
+                </div>
+              </div>
+              <div style={{ flexGrow: 2 }}>
+                <div
+                  id={ExchangeCodeDisplayID}
+                  style={{ wordWrap: "break-word" }}>
+                  Login status...
+                </div>
+              </div>
+            </>
+          )}
+          {currentTab == 2 && (
+            <>
+              <h2>Coming Soon...</h2>
+            </>
+          )}
         </div>
       </div>
     </>
