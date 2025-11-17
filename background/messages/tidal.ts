@@ -4,6 +4,7 @@ import type { PlasmoMessaging } from "@plasmohq/messaging"
 
 const clientID: string = "wzkJ9EGRVZyio8l2"
 
+const ApplicationTarget = "tidal:"
 const TidalAppTrackBase = "https://tidal.com/track"
 const TidalAppSearchBase = "https://tidal.com/search"
 const TidalAPIBase = "https://openapi.tidal.com/v2"
@@ -84,6 +85,10 @@ export async function OpenOnTidal(
     const firstChoice = responseData?.data[0]?.id
     finalUrl = encodeURI(`${TidalAppTrackBase}/${firstChoice}`)
   }
+
+  // targeting application or website based on user settings
+  //chrome.storage.sync.get("common-settings")
+  //finalUrl = ApplicationTarget + finalUrl
 
   // send final URL
   return finalUrl

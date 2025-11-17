@@ -77,15 +77,28 @@ export default function OptionsPage(): React.JSX.Element {
           {currentTab == 0 && (
             <>
               <div style={{ flexGrow: 2, margin: "2rem" }}>
-                <h2>Default Streaming Service</h2>
                 <div>
-                  Which streaming service to use when clicking the "Stream"
-                  button on websites.{" "}
+                  <h2>Default Streaming Service</h2>
+                  <div>
+                    Which streaming service to use when clicking the "Stream"
+                    button on websites.
+                  </div>
+                  <select>
+                    <option>Tidal</option>
+                    <option>Spotify</option>
+                  </select>
                 </div>
-                <select>
-                  <option>Tidal</option>
-                  <option>Spotify</option>
-                </select>
+                <div>
+                  <h2>Open Streaming App Behavior</h2>
+                  <div>
+                    When opening a link to the streaming service, open in
+                    application or in the browser as web page.
+                  </div>
+                  <select>
+                    <option>Application</option>
+                    <option>Web Page</option>
+                  </select>
+                </div>
               </div>
             </>
           )}
