@@ -1,5 +1,7 @@
 # "SwitchStream"
-A browser extension that gives music stores a connection to listen to the song on a streaming service instead.
+A browser extension that connects online music stores to your preferred streaming service. 
+
+*No more low quality samples, just listen directly to the song!* 🎧
 
 
 ## What is this?
@@ -11,6 +13,12 @@ Do you like browsing music through online webstores like Beatport, JunoDownload,
 
 | Web Store | Spotify | Tidal |
 | --------- |--------- | -------- | 
-| Beatport  | ❌ | 🟡 |
+| Beatport  | ❌ | 🟢 |
 | JunoDownload | ❌ | ❌
 
+### Technologies Involved & Highlights
+- Typescript
+- React - UI created with Custom styling and BaseUI, FloatingUI utilties
+- [Plasmo](https://www.plasmo.com) - Browser Extension Framework
+- Functioning OAuth2 Login
+- 3rd Party API Integration
