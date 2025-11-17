@@ -43,7 +43,16 @@ const tidal: PlasmoMessaging.MessageHandler = (req, res) => {
 }
 
 export async function TidalLoginStatus(): Promise<string> {
-  return ""
+  const initCheck = await init({
+    clientId: clientID,
+    credentialsStorageKey: "authorizationCode",
+    scopes: []
+  })
+
+  const credentials = await credentialsProvider.getCredentials()
+
+  console.log(credentials)
+  return credentials.token ? "Received Token" : "Empty"
 }
 
 export async function OpenOnTidal(
@@ -51,33 +60,24 @@ export async function OpenOnTidal(
   album: string
 ): Promise<string> {
   console.log("🌊🟢 starting open...")
-  try {
-    const initCheck = await init({
-      clientId: clientID,
-      credentialsStorageKey: "authorizationCode",
-      scopes: []
-    })
-    console.log("🌊🟡 after init...")
-    console.log(initCheck)
-  } catch (ex) {
-    return "x: Could not init"
-  }
-  const credentials = await credentialsProvider.getCredentials()
-  console.log("🌊🟡 after auth...")
-  console.log(credentials)
+
+  const Credentials = await chrome.storage.sync.get("tidal")
 
   // build request
   const targetUrl = encodeURI(
     `${TidalAPIBase}/searchResults/${artist} ${album}/relationships/tracks?countryCode=US&include=tracks`
   )
-  const authString: string = "Bearer " + (credentials.token as String)
+  const authString: string = "Bearer " + (Credentials?.tidal?.token as String)
   const request = new Request(targetUrl)
   request.headers.append("Authorization", authString)
   request.headers.append("Accept", "application/vnd.api+json")
 
   // do search
   const response = await fetch(request)
-  const firstChoice = response.body[0]
+  console.log("search results....")
+  const responseData = await response.json()
+  console.log(responseData)
+  const firstChoice = responseData?.data[0]?.id
   const finalUrl = encodeURI(`${TidalAppTrackBase}/${firstChoice}`)
 
   // send final URL

@@ -1,10 +1,17 @@
-import { credentialsProvider, finalizeLogin, init, initializeLogin } from "@tidal-music/auth";
-import React from "react";
+import {
+  credentialsProvider,
+  finalizeLogin,
+  init,
+  initializeLogin
+} from "@tidal-music/auth"
+import React, { useState } from "react"
 
-const ExchangeCodeDisplayID = "exchange-code";
-const SearchResultDisplayID = "search-out";
+import { sendToBackground } from "@plasmohq/messaging"
 
-const clientID: string = "wzkJ9EGRVZyio8l2";
+const ExchangeCodeDisplayID = "exchange-code"
+const SearchResultDisplayID = "search-out"
+
+const clientID: string = "wzkJ9EGRVZyio8l2"
 
 function ButtonStyleObject(color: string) {
   return {
@@ -20,15 +27,17 @@ function ButtonStyleObject(color: string) {
 const styleRow = { padding: "0.5rem" }
 
 export default function OptionsPage(): React.JSX.Element {
+  const [currentTab, setTab] = useState(0)
+
   // Check if authed
   init({
     clientId: clientID,
     credentialsStorageKey: "authorizationCode"
   }).then(async () => {
-    const credentials = await credentialsProvider.getCredentials();
+    const credentials = await credentialsProvider.getCredentials()
     document.getElementById(ExchangeCodeDisplayID).innerText =
-      `TIDAL UserID: ${credentials.userId}`;
-  });
+      `TIDAL UserID: ${credentials.userId}`
+  })
   const css = `
     .category {
         padding: 3rem;
@@ -44,23 +53,25 @@ export default function OptionsPage(): React.JSX.Element {
       <style>{css}</style>
       <div className="page">
         <h1>Settings</h1>
-        <div style={{ display: 'flex' }}>
+        <div style={{ display: "flex" }}>
           <div>
-            <div className="category top">General</div>
-            <div className="category">Tidal</div>
-            <div className="category bottom">Spotify</div>
+            <div className="category top" onClick={() => setTab(0)}>
+              General {currentTab == 0 && <>🟢</>}
+            </div>
+            <div className="category" onClick={() => setTab(1)}>
+              Tidal {currentTab == 1 && <>🟢</>}
+            </div>
+            <div className="category bottom" onClick={() => setTab(2)}>
+              Spotify {currentTab == 2 && <>🟢</>}
+            </div>
           </div>
-          <div style={{ width: '600px' }}>
-
-
-
-
-
-            <div id={ExchangeCodeDisplayID}
-              style={{ wordWrap: 'break-word' }}>Login status...</div>
+          <div style={{ width: "600px" }}>
+            <div id={ExchangeCodeDisplayID} style={{ wordWrap: "break-word" }}>
+              Login status...
+            </div>
             <div style={styleRow}>
               <button
-                onClick={() => TidalLoginFlow()}
+                onClick={() => TidalLogin()}
                 style={ButtonStyleObject("black")}>
                 Login to TIDAL
               </button>
@@ -93,19 +104,18 @@ export default function OptionsPage(): React.JSX.Element {
   )
 }
 
-async function TidalLoginFlow() {
-  const redirectUri = chrome.identity.getRedirectURL("oauth2");
+async function TidalLogin() {
+  const redirectUri = chrome.identity.getRedirectURL("oauth2")
 
   await init({
     clientId: clientID,
     credentialsStorageKey: "authorizationCode"
-  });
+  })
 
   const loginUrl = await initializeLogin({
     redirectUri: redirectUri
-  });
+  })
 
-  console.log(`[EXTENSION] firing login flow: ${loginUrl}`)
   chrome.identity.launchWebAuthFlow(
     {
       url: loginUrl,
@@ -114,20 +124,21 @@ async function TidalLoginFlow() {
     (callbackURL) => {
       // login did not return the needed callbackURL
       if (callbackURL === undefined) {
-        console.error("[EXTENSION-ERROR] callbackUrlString is undefined");
+        console.error("🔴: AuthFlow did not return callback URL")
         return
       }
-      console.log(`returned url: ${callbackURL}`);
-      (document.getElementById(ExchangeCodeDisplayID) as HTMLDivElement).innerText = callbackURL;
 
-      // login flow returned with Authorization code
-      const token = callbackURL.substring(
-        callbackURL.indexOf("="),
-        callbackURL.indexOf("&")
-      )
+      const token = callbackURL.substring(callbackURL.indexOf("?") + 1)
 
-      chrome.storage.local.set({
-        "tidal-token": token
+      finalizeLogin(token).then(async () => {
+        const credentials = await credentialsProvider.getCredentials()
+
+        chrome.storage.sync.set({
+          tidal: {
+            userId: credentials.userId,
+            token: credentials.token
+          }
+        })
       })
     }
   )
@@ -136,7 +147,7 @@ async function TidalLoginFlow() {
 async function ExchangeToken() {
   const query = (
     document.getElementById(ExchangeCodeDisplayID) as HTMLDivElement
-  ).innerText.split("?")[1];
+  ).innerText.split("?")[1]
 
   await init({
     clientId: clientID,
@@ -144,41 +155,41 @@ async function ExchangeToken() {
   })
 
   finalizeLogin(query).then(async () => {
-    const credentials = await credentialsProvider.getCredentials();
-    console.log("Retrieved Credentials.");
-    console.log(credentials);
-    chrome.storage.session.set({
+    const credentials = await credentialsProvider.getCredentials()
+    console.log("Retrieved Credentials.")
+    console.log(credentials)
+    chrome.storage.sync.set({
       tidal: {
         userId: credentials.userId,
-        token: credentials.token,
+        token: credentials.token
       }
     })
   })
-
 }
 
 async function DoSearch() {
-  const credentials = await credentialsProvider.getCredentials();
+  const credentials = await credentialsProvider.getCredentials()
 
-  const TidalSearchBase = 'https://tidal.com/track';
-  const TidalAPIBase = 'https://openapi.tidal.com/v2';
-  const targetUrl = encodeURI(`${TidalAPIBase}/searchResults/kaiserdisco devon/relationships/tracks?countryCode=US&include=tracks`);
+  const TidalSearchBase = "https://tidal.com/track"
+  const TidalAPIBase = "https://openapi.tidal.com/v2"
+  const targetUrl = encodeURI(
+    `${TidalAPIBase}/searchResults/kaiserdisco devon/relationships/tracks?countryCode=US&include=tracks`
+  )
 
-  const authString: string = "Bearer " + (credentials.token as String);
-  const request = new Request(targetUrl);
-  request.headers.append("Authorization", authString);
-  request.headers.append("Accept", "application/vnd.api+json");
+  const authString: string = "Bearer " + (credentials.token as String)
+  const request = new Request(targetUrl)
+  request.headers.append("Authorization", authString)
+  request.headers.append("Accept", "application/vnd.api+json")
 
-  fetch(request)
-    .then(async (response) => {
-      console.log("API Response");
-      const responseData = await response.json();
-      console.log(responseData.data);
-      const targetTrackID = responseData.data[0].id;
-      const targetTrackURL = TidalSearchBase + "/" + targetTrackID;
-      document.getElementById(SearchResultDisplayID).innerText = "targeting url " + targetTrackURL;
+  fetch(request).then(async (response) => {
+    console.log("API Response")
+    const responseData = await response.json()
+    console.log(responseData.data)
+    const targetTrackID = responseData.data[0].id
+    const targetTrackURL = TidalSearchBase + "/" + targetTrackID
+    document.getElementById(SearchResultDisplayID).innerText =
+      "targeting url " + targetTrackURL
 
-      window.open(targetTrackURL, "_self");
-
-    });
+    window.open(targetTrackURL, "_self")
+  })
 }
