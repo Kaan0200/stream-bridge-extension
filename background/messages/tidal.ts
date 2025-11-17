@@ -62,7 +62,7 @@ export async function OpenOnTidal(
   console.log("🌊🟢 starting open...")
 
   const Credentials = await chrome.storage.sync.get("tidal")
-
+  let finalUrl: string = ""
   // build request
   const targetUrl = encodeURI(
     `${TidalAPIBase}/searchResults/${artist} ${album}/relationships/tracks?countryCode=US&include=tracks`
@@ -76,9 +76,14 @@ export async function OpenOnTidal(
   const response = await fetch(request)
   console.log("search results....")
   const responseData = await response.json()
-  console.log(responseData)
-  const firstChoice = responseData?.data[0]?.id
-  const finalUrl = encodeURI(`${TidalAppTrackBase}/${firstChoice}`)
+
+  // check for errors
+  if (responseData.errors) {
+    throw new Error("Unauthenticated with Tidal")
+  } else {
+    const firstChoice = responseData?.data[0]?.id
+    finalUrl = encodeURI(`${TidalAppTrackBase}/${firstChoice}`)
+  }
 
   // send final URL
   return finalUrl
