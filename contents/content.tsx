@@ -43,24 +43,24 @@ export const getStyle: PlasmoGetStyle = () => {
         }
         #ext-stream-bridge-container {
             display: flex;
-            padding: 4px;
             border-radius: 8px;
             color: white;
         }
         #ext-stream-default {
-            background-color: #1E2338;
-            line-height: 16px;
-            font-size: 12px;
-            padding: 0.5rem 0.5rem;
-            font-weight: 500;
+            background-color: #1E2C5B;
+            line-height: 1rem;
+            font-size: 0.75rem;
+            padding: 0 .5rem;
+            font-weight: 700;
             border-radius: 4px 0 0 4px;
         }
         #ext-stream-default:hover {
             background-color: #293C7A;
         }
         #ext-stream-dropdown-anchor {
-            padding: 0.25rem 0.5rem;
-            background-color: #1E2C5B;
+            height: 24px;
+            width: 24px;
+            background-color: #1E2338;
             border-radius: 0 4px 4px 0;
             cursor: pointer;
         }

@@ -90,13 +90,6 @@ export default function OptionsPage(): React.JSX.Element {
                 Refresh Token
               </button>
             </div>
-            <div style={styleRow}>
-              <button
-                onClick={() => DoSearch()}
-                style={ButtonStyleObject("grey")}>
-                Fire Search
-              </button>
-            </div>
           </div>
         </div>
       </div>
@@ -164,32 +157,5 @@ async function ExchangeToken() {
         token: credentials.token
       }
     })
-  })
-}
-
-async function DoSearch() {
-  const credentials = await credentialsProvider.getCredentials()
-
-  const TidalSearchBase = "https://tidal.com/track"
-  const TidalAPIBase = "https://openapi.tidal.com/v2"
-  const targetUrl = encodeURI(
-    `${TidalAPIBase}/searchResults/kaiserdisco devon/relationships/tracks?countryCode=US&include=tracks`
-  )
-
-  const authString: string = "Bearer " + (credentials.token as String)
-  const request = new Request(targetUrl)
-  request.headers.append("Authorization", authString)
-  request.headers.append("Accept", "application/vnd.api+json")
-
-  fetch(request).then(async (response) => {
-    console.log("API Response")
-    const responseData = await response.json()
-    console.log(responseData.data)
-    const targetTrackID = responseData.data[0].id
-    const targetTrackURL = TidalSearchBase + "/" + targetTrackID
-    document.getElementById(SearchResultDisplayID).innerText =
-      "targeting url " + targetTrackURL
-
-    window.open(targetTrackURL, "_self")
   })
 }
